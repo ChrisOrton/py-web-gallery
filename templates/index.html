@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Browser</title>
+</head>
+<body>
+    <h1>Files and Folders in {{ folder }}</h1>
+    <ul>
+        {% for item in items %}
+            {% if item.type == 'file' %}
+                <li><a href="{{ url_for('serve_file', file=item.name) }}">{{ item.name }}</a></li>
+            {% elif item.type == 'folder' %}
+                <li><a href="{{ url_for('list_folder', folder=item.name ~ '/' ~ current_folder) }}">{{ item.name }}</a></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('last_folder') }}">Previous Folder</a>
+</body>
+</html>
