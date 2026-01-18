@@ -3,11 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>File Browser</title>
+    <style>
+        ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px; /* Adjust the gap between items as needed */
+            list-style-type: none; /* Remove default list styling */
+            padding: 0; /* Remove default padding */
+        }
+        li {
+            flex: 1 1 calc(33% - 20px); /* Adjust the width and gap between items as needed */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        img {
+            max-width: 100%; /* Ensure images fit within their container */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
 </head>
 <body>
     <h1>Files and Folders in {{ folder }}</h1>
-
-
     <ul>
         {% for item in items %}
             <li style="cursor: pointer;">
@@ -19,14 +36,13 @@
                     {% if 'thumbnail' in item %}
                         <img src="{{ item.thumbnail }}" alt="Thumbnail" width="100">
                     {% else %}
-                        <img src="/path/to/default/image.png" alt="Default Thumbnail" width="100">
+                        <img src="static/folder.png" alt="Default Thumbnail" width="100">
                     {% endif %}
                     {{ item.name }}
                 </a>
             </li>
         {% endfor %}
     </ul>
-
     <a href="{{ url_for('last_folder') }}">Previous Folder</a>
 </body>
 </html>
