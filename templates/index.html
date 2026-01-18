@@ -8,11 +8,16 @@
     <h1>Files and Folders in {{ folder }}</h1>
     <ul>
         {% for item in items %}
+          <li>
             {% if item.type == 'file' %}
-                <li><a href="{{ url_for('serve_file', file=item.path) }}">{{ item.name }}</a></li>
+                  {% if 'thumbnail' in item %}
+                      <img src="{{ item.thumbnail }}" alt="Thumbnail" width="100">
+                  {% endif %}
+                <a href="{{ url_for('serve_file', file=item.path) }}">{{ item.name }}</a>
             {% elif item.type == 'folder' %}
-                <li><a href="{{ url_for('list_folder', folder=item.path) }}">{{ item.name }}</a></li>
+                <a href="{{ url_for('list_folder', folder=item.path) }}">{{ item.name }}</a>
             {% endif %}
+          </li>
         {% endfor %}
     </ul>
     <a href="{{ url_for('last_folder') }}">Previous Folder</a>

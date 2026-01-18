@@ -1,6 +1,8 @@
 from flask import Flask, request, send_file, redirect, url_for, render_template
+import subprocess
 import os
 from urllib import parse
+import mimetypes
 
 
 app = Flask(__name__)
@@ -14,9 +16,19 @@ def list_files(folder):
         with os.scandir(folder) as it:
             for entry in it:
                 if entry.is_file():
-                    file_path = os.path.join(folder, entry.name)
-                    file_path = parse.quote_plus(file_path)
+                    bare_file_path = os.path.join(folder, entry.name)
+                    file_path = parse.quote_plus(bare_file_path)
                     files_and_folders.append({"type": "file", "path": file_path, "name": entry.name})
+                    # Check if the file is an image or video and add a thumbnail URL if applicable
+                    mime_type, _ = mimetypes.guess_type(entry.name)
+                    if mime_type and 'image' in mime_type:
+                        files_and_folders[-1]['thumbnail'] = url_for('serve_file', file=file_path)
+                    elif mime_type and ('video' in mime_type or 'application/octet-stream' in mime_type):  # For videos and other streams
+                        bare_thumb_path = get_video_thumbnail(bare_file_path)
+                        print(f"bare thumb {bare_thumb_path}")
+                        thumb_path = parse.quote_plus(bare_thumb_path)
+                        print(f"thumb {thumb_path}")
+                        files_and_folders[-1]['thumbnail'] = url_for('serve_file', file=thumb_path)
                 elif entry.is_dir():
                     new_folder = os.path.join(folder, entry.name)
                     new_folder = parse.quote_plus(new_folder)
@@ -25,6 +37,15 @@ def list_files(folder):
     except Exception as e:
         print(f"Error scanning {folder}: {e}")
     return files_and_folders
+
+
+def get_video_thumbnail(file_path):
+    # Generate a low-quality thumbnail using ffmpeg and overwrite if it already exists
+    thumb_path = f"/tmp/thumb_{os.path.basename(file_path)}.png"
+    command = ['ffmpeg', '-y', '-i', file_path, '-vf', 'scale=100:100', '-vframes', '1', '-update','1', thumb_path]
+    subprocess.run(command, check=True)
+    return thumb_path
+
 
 @app.route('/')
 def index():
