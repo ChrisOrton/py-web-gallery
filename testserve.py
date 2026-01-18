@@ -15,10 +15,11 @@ def list_files(folder):
             for entry in it:
                 if entry.is_file():
                     file_path = os.path.join(folder, entry.name)
+                    file_path = parse.quote_plus(file_path)
                     files_and_folders.append({"type": "file", "name": file_path})
                 elif entry.is_dir():
                     new_folder = os.path.join(folder, entry.name)
-                    new_folder = parse.quote(new_folder)
+                    new_folder = parse.quote_plus(new_folder)
                     print(f"create {new_folder}")
                     files_and_folders.append({"type": "folder", "name": new_folder, "children": []})
     except Exception as e:
@@ -35,8 +36,7 @@ def index():
 @app.route('/folder/<path:folder>')
 def list_folder(folder):
     global current_folder, previous_folder
-    # new_folder = os.path.join(current_folder, folder)
-    new_folder = "/"+folder
+    new_folder = parse.unquote( folder)
     print(f"change {new_folder}")
     if os.path.isdir(new_folder):
         print(current_folder)
@@ -48,9 +48,7 @@ def list_folder(folder):
 
 @app.route('/play/<path:file>')
 def serve_file(file):
-    #file_path = os.path.join(current_folder, file)
-    print(f"play file:{file}")
-    file_path = "/"+file
+    file_path = parse.unquote( file)
     print(f"play file_path:{file_path}")
     if os.path.isfile(file_path):
         return send_file(file_path)
