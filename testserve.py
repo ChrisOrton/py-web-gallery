@@ -32,8 +32,8 @@ def list_folder(folder):
         print(new_folder)
         previous_folder.append(current_folder)  # Update the previous folder before changing to the new one
         current_folder = new_folder
-    return redirect(url_for('index'))
-    # return render_template('index.html', folder=current_folder, items=list_files(current_folder))
+    # return redirect(url_for('index'))
+    return render_template('index.html', folder=current_folder, items=list_files(current_folder))
 
 @app.route('/play/<path:file>')
 def serve_file(file):
