@@ -11,7 +11,7 @@
             {% if item.type == 'file' %}
                 <li><a href="{{ url_for('serve_file', file=item.name) }}">{{ item.name }}</a></li>
             {% elif item.type == 'folder' %}
-                <li><a href="{{ url_for('list_folder', folder=item.name ~ '/' ~ current_folder) }}">{{ item.name }}</a></li>
+                <li><a href="{{ url_for('list_folder', folder=item.name) }}">{{ item.name }}</a></li>
             {% endif %}
         {% endfor %}
     </ul>

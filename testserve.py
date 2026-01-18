@@ -1,7 +1,10 @@
 from flask import Flask, request, send_file, redirect, url_for, render_template
 import os
+from urllib import parse
+
 
 app = Flask(__name__)
+root_folder = "/home/user/testpy/samples"  # Default folder
 current_folder = "/home/user/testpy/samples"  # Default folder
 previous_folder = []  # Initially no previous folder
 
@@ -13,7 +16,10 @@ def list_files(folder):
                 if entry.is_file():
                     files_and_folders.append({"type": "file", "name": entry.name})
                 elif entry.is_dir():
-                    files_and_folders.append({"type": "folder", "name": entry.name, "children": []})
+                    new_folder = os.path.join(folder, entry.name)
+                    new_folder = parse.quote(new_folder)
+                    print(f"create {new_folder}")
+                    files_and_folders.append({"type": "folder", "name": new_folder, "children": []})
     except Exception as e:
         print(f"Error scanning {folder}: {e}")
     return files_and_folders
@@ -21,12 +27,16 @@ def list_files(folder):
 @app.route('/')
 def index():
     global current_folder
+    current_folder = root_folder
+    print(f"at root current folder:{current_folder}")
     return render_template('index.html', folder=current_folder, items=list_files(current_folder))
 
 @app.route('/folder/<path:folder>')
 def list_folder(folder):
     global current_folder, previous_folder
-    new_folder = os.path.join(current_folder, folder)
+    # new_folder = os.path.join(current_folder, folder)
+    new_folder = "/"+folder
+    print(f"change {new_folder}")
     if os.path.isdir(new_folder):
         print(current_folder)
         print(new_folder)
