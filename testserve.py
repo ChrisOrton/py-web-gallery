@@ -16,12 +16,12 @@ def list_files(folder):
                 if entry.is_file():
                     file_path = os.path.join(folder, entry.name)
                     file_path = parse.quote_plus(file_path)
-                    files_and_folders.append({"type": "file", "name": file_path})
+                    files_and_folders.append({"type": "file", "path": file_path, "name": entry.name})
                 elif entry.is_dir():
                     new_folder = os.path.join(folder, entry.name)
                     new_folder = parse.quote_plus(new_folder)
                     print(f"create {new_folder}")
-                    files_and_folders.append({"type": "folder", "name": new_folder, "children": []})
+                    files_and_folders.append({"type": "folder", "path": new_folder, "name": entry.name})
     except Exception as e:
         print(f"Error scanning {folder}: {e}")
     return files_and_folders
@@ -61,13 +61,8 @@ def last_folder():
     print("SHould be going backward")
     if not previous_folder:
         return redirect(url_for('index'))
-    print(f"Previous:{previous_folder[-1]}")
     next_folder = previous_folder.pop()
-    if next_folder == None:
-        return redirect(url_for('index'))
-    if os.path.isdir(next_folder):
-        current_folder = next_folder
-    return redirect(url_for('index'))
+    return redirect(url_for('list_folder', folder=next_folder))
 
 if __name__ == '__main__':
     app.run(debug=True)
