@@ -14,7 +14,8 @@ def list_files(folder):
         with os.scandir(folder) as it:
             for entry in it:
                 if entry.is_file():
-                    files_and_folders.append({"type": "file", "name": entry.name})
+                    file_path = os.path.join(folder, entry.name)
+                    files_and_folders.append({"type": "file", "name": file_path})
                 elif entry.is_dir():
                     new_folder = os.path.join(folder, entry.name)
                     new_folder = parse.quote(new_folder)
@@ -47,7 +48,10 @@ def list_folder(folder):
 
 @app.route('/play/<path:file>')
 def serve_file(file):
-    file_path = os.path.join(current_folder, file)
+    #file_path = os.path.join(current_folder, file)
+    print(f"play file:{file}")
+    file_path = "/"+file
+    print(f"play file_path:{file_path}")
     if os.path.isfile(file_path):
         return send_file(file_path)
     else:
