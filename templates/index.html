@@ -6,20 +6,27 @@
 </head>
 <body>
     <h1>Files and Folders in {{ folder }}</h1>
+
+
     <ul>
         {% for item in items %}
-          <li>
-            {% if item.type == 'file' %}
-                  {% if 'thumbnail' in item %}
-                      <img src="{{ item.thumbnail }}" alt="Thumbnail" width="100">
-                  {% endif %}
-                <a href="{{ url_for('serve_file', file=item.path) }}">{{ item.name }}</a>
-            {% elif item.type == 'folder' %}
-                <a href="{{ url_for('list_folder', folder=item.path) }}">{{ item.name }}</a>
-            {% endif %}
-          </li>
+            <li style="cursor: pointer;">
+                {% if item.type == 'file' %}
+                    <a href="{{ url_for('serve_file', file=item.path) }}">
+                {% elif item.type == 'folder' %}
+                    <a href="{{ url_for('list_folder', folder=item.path) }}">
+                {% endif %}
+                    {% if 'thumbnail' in item %}
+                        <img src="{{ item.thumbnail }}" alt="Thumbnail" width="100">
+                    {% else %}
+                        <img src="/path/to/default/image.png" alt="Default Thumbnail" width="100">
+                    {% endif %}
+                    {{ item.name }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
+
     <a href="{{ url_for('last_folder') }}">Previous Folder</a>
 </body>
 </html>
